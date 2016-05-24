@@ -16,7 +16,7 @@ require_once('config.php');
 class SpreaderPlugin extends Plugin {
  
     var $config_class = 'SpreaderConfig';
-    static private $config;
+    private static $config;
     function bootstrap() {
         self::$config = self::getConfig();
         if (!self::$config->get('spreader_current_staff')) {
