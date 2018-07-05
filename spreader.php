@@ -22,7 +22,7 @@ class SpreaderPlugin extends Plugin {
         if (!self::$config->get('spreader_current_staff')) {
             self::$config->set('spreader_current_staff', 0);
         }   
-        $object = Signal::connect('model.created', array('SpreaderPlugin', 'spreadTicket'));
+        $object = Signal::connect('ticket.created', array('SpreaderPlugin', 'spreadTicket'));
     }
     
     function getCurrentStaffId() {
