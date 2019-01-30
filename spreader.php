@@ -34,7 +34,7 @@ class SpreaderPlugin extends Plugin {
             }
         }
         $current = $plugin_staff[$current_staff];
-        $spreader_current_staff = $current_staff < count($plugin_staff)-1) 
+        $spreader_current_staff = ($current_staff < (count($plugin_staff) - 1)) 
                                   ? self::$config->get('spreader_current_staff')+1
                                   : 0;
         self::$config->set('spreader_current_staff', $spreader_current_staff);
