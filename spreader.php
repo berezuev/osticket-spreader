@@ -1,7 +1,7 @@
 <?php
  
 /**
- * Description of plugin
+ * osTicket plugin for spreading tickets between manager using round-robin algorithm
  * @author Alexey Berezuev <alexey@berezuev.ru>
  * @license http://opensource.org/licenses/MIT
  * @version 0.1
@@ -14,7 +14,6 @@ require_once(INCLUDE_DIR . 'class.app.php');
 require_once('config.php');
 
 class SpreaderPlugin extends Plugin {
- 
     var $config_class = 'SpreaderConfig';
     private static $config;
     function bootstrap() {
@@ -35,25 +34,24 @@ class SpreaderPlugin extends Plugin {
             }
         }
         $current = $plugin_staff[$current_staff];
-        if($current_staff >= count($plugin_staff)-1){
-            self::$config->set('spreader_current_staff', 0);
-        } else {
-            self::$config->set('spreader_current_staff', self::$config->get('spreader_current_staff')+1);
-        }
+        $spreader_current_staff = $current_staff < count($plugin_staff)-1) 
+                                  ? self::$config->get('spreader_current_staff')+1
+                                  : 0;
+        self::$config->set('spreader_current_staff', $spreader_current_staff);
         return $current;
     }
 
     function isCategorySelected($cid) {
-        return self::$config->get("spreader_category_id_".$cid);
+        return self::$config->get("spreader_category_id_{$cid}");
     }
 
     function spreadTicket($object, $data){
-        if (get_class($object) == "Ticket") {
+        if (get_class($object) === 'Ticket') {
             $cid = $object->getTopicId();
             self::$config = self::getConfig();
             if (self::isCategorySelected($cid)){
                 $staff_id = self::getCurrentStaffId();
-                $object->assignToStaff($staff_id,"Auto assigning", true);
+                $object->assignToStaff($staff_id, 'Auto assigning', true);
                 return true;
             }
         }
